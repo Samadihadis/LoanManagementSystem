@@ -45,4 +45,8 @@ public class Loan {
 
     private LoanType loanType;
 
+    @ManyToOne
+    @JoinColumn(name = "customer_id")
+    private Customer customer;
+
 }
