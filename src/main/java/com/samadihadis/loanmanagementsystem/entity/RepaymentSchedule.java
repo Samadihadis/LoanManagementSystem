@@ -28,6 +28,7 @@ public class RepaymentSchedule {
 
     private BigDecimal totalInstallmentAmount;    //مبلغ کل هر قسط
 
+    @Enumerated(EnumType.STRING)
     private RepaymentScheduleStatus repaymentScheduleStatus;
 
     @ManyToOne(fetch = FetchType.LAZY)

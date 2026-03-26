@@ -41,8 +41,10 @@ public class Loan {
     @Column(nullable = false)
     private LocalDate maturityDate;
 
+    @Enumerated(EnumType.STRING)
     private LoanStatus loanStatus;
 
+    @Enumerated(EnumType.STRING)
     private LoanType loanType;
 
     @ManyToOne
