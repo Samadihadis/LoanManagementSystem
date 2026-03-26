@@ -2,10 +2,7 @@ package com.samadihadis.loanmanagementsystem.entity;
 
 
 import com.samadihadis.loanmanagementsystem.enums.RepaymentScheduleStatus;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -32,5 +29,9 @@ public class RepaymentSchedule {
     private BigDecimal totalInstallmentAmount;    //مبلغ کل هر قسط
 
     private RepaymentScheduleStatus repaymentScheduleStatus;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "loan_id", nullable = false)
+    private Loan loan;         //کلید خارجی (foreign key) برای اتصال به وام مربوطه
 
 }

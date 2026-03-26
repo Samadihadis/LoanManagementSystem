@@ -50,8 +50,4 @@ public class Loan {
     private Customer customer;
 
 
-    @ManyToOne
-    @JoinColumn(name = "repayment_id")
-    private RepaymentSchedule repaymentSchedule;
-
 }
