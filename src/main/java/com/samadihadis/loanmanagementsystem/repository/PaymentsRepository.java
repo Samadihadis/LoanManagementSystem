@@ -13,7 +13,5 @@ public interface PaymentsRepository extends JpaRepository<Payments, Long> {
 
     Payments findTopByLoanOrderByPaymentDateDesc(Loan loan);   //پیدا کردن آخرین پرداخت
 
-    List<Payments> findByPaymentDate(LocalDate date);   //پیدا کردن پرداخت های امروز
-
-    boolean existsByLoan(Loan loan);  // پیدا کردن آیا وام پرداختی داشته
+    List<Payments> findByLoan(Loan loan);  // پیدا کردن تمام پرداخت های وام
 }

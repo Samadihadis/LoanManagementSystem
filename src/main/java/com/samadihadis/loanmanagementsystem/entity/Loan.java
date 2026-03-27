@@ -23,7 +23,7 @@ public class Loan {
 
     @NotNull(message = "مبلغ وام نمیتواند خالی باشد")
     @Positive(message = "مبلغ وام باید مثبت باشد")
-    private BigDecimal principalAmount;   //مقدار کل مبلف وامی که دریافت شده - مبلغ اصلی وام
+    private BigDecimal principalAmount;   //مقدار کل مبلغ وامی که دریافت شده - مبلغ اصلی وام
 
     @Column(precision = 5, scale = 2)
     private BigDecimal interestRate;   //نرخ بهره سالانه
