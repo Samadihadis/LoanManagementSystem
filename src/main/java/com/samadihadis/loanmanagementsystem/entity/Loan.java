@@ -4,10 +4,7 @@ package com.samadihadis.loanmanagementsystem.entity;
 import com.samadihadis.loanmanagementsystem.enums.LoanStatus;
 import com.samadihadis.loanmanagementsystem.enums.LoanType;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Future;
-import jakarta.validation.constraints.Max;
-import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.*;
 import lombok.*;
 
 import java.math.BigDecimal;
@@ -24,6 +21,8 @@ public class Loan {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @NotNull(message = "مبلغ وام نمیتواند خالی باشد")
+    @Positive(message = "مبلغ وام باید مثبت باشد")
     private BigDecimal principalAmount;   //مقدار کل مبلف وامی که دریافت شده - مبلغ اصلی وام
 
     @Column(precision = 5, scale = 2)

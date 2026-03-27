@@ -40,14 +40,18 @@ public class CustomerService {
     public Customer updateEmail(Long customerId , String newEmail){
 
         Customer customer = customerRepository.findById(customerId)
-                .orElseThrow(() -> new RuntimeException("مشتری با شماره " + customerId + " یافت نشد."));
+                .orElseThrow(() -> new RuntimeException(
+                        String.format("مشتری با شناسه %d یافت نشد." , customerId)
+                ));
 
         if (newEmail == null || newEmail.trim().isEmpty()) {
             throw new IllegalArgumentException("ایمیل نمی‌تواند خالی باشد");
         }
 
         if (customerRepository.existsByEmail(newEmail)) {
-            throw new IllegalStateException("ایمیل " + newEmail + " قبلاً ثبت شده است.");
+            throw new IllegalStateException(
+                    String.format( "ایمیل %s قبلا ثبت شده است." , newEmail)
+            );
         }
 
         customer.setEmail(newEmail);
