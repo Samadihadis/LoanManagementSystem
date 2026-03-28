@@ -12,9 +12,9 @@ public interface RepaymentScheduleRepository extends JpaRepository<RepaymentSche
 
     List<RepaymentSchedule> findByRepaymentScheduleStatus(RepaymentScheduleStatus repaymentScheduleStatus);
 
-    List<RepaymentSchedule> findByDueDateAndRepaymentScheduleStatus(LocalDate date
-            , RepaymentScheduleStatus status);  //پیدا کردن اقساطی که امروز سررسید می شود
+    List<RepaymentSchedule> findByDueDateAndRepaymentScheduleStatus(LocalDate localDate
+            , RepaymentScheduleStatus repaymentScheduleStatus);  //پیدا کردن اقساطی که امروز سررسید می شود
 
-    long countByLoanAndRepaymentScheduleStatus(Loan loan, RepaymentScheduleStatus status);  //شمارش تعداداقساط پرداخت شده یک وام
+    long countByLoanAndRepaymentScheduleStatus(Loan loan, RepaymentScheduleStatus repaymentScheduleStatus);  //شمارش تعداداقساط پرداخت شده یک وام
 
 }
