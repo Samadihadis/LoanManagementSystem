@@ -60,7 +60,6 @@ public class RepaymentScheduleService {
         return repaymentScheduleRepository.findByRepaymentScheduleStatus(repaymentScheduleStatus);
     }
 
-
     public List<RepaymentSchedule> getFindByDueDateAndRepaymentScheduleStatus(LocalDate localDate,
                                                                               RepaymentScheduleStatus repaymentScheduleStatus) {
 

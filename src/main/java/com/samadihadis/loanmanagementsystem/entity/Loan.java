@@ -36,7 +36,7 @@ public class Loan {
     @Column(nullable = false)
     private LocalDate startDate;      //تاریخی که وام شروع شده است
 
-    @Future(message = "تاریخ سررسید باید در آینده باشد")
+//    @Future(message = "تاریخ سررسید باید در آینده باشد")
     @Column(nullable = false)
     private LocalDate maturityDate;
 

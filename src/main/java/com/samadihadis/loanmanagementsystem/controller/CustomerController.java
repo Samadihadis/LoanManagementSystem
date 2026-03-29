@@ -64,7 +64,7 @@ public class CustomerController {
         return ResponseEntity.ok("تعداد مشتری‌ها: " + customerService.getAllCustomers().size());
     }
 
-    @GetMapping("/national_id/{nationalId}")
+    @GetMapping("/national-id/{nationalId}")
     public ResponseEntity<?> getCustomerByNationalId(@PathVariable String nationalId) {
 
         Customer customer = customerService.getCustomerByNationalId(nationalId);

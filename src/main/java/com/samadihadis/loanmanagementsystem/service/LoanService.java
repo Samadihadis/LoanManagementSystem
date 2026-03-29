@@ -1,9 +1,11 @@
 package com.samadihadis.loanmanagementsystem.service;
 
 
+import com.samadihadis.loanmanagementsystem.entity.Customer;
 import com.samadihadis.loanmanagementsystem.entity.Loan;
 import com.samadihadis.loanmanagementsystem.enums.LoanStatus;
 import com.samadihadis.loanmanagementsystem.enums.LoanType;
+import com.samadihadis.loanmanagementsystem.repository.CustomerRepository;
 import com.samadihadis.loanmanagementsystem.repository.LoanRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -16,6 +18,7 @@ import java.util.Optional;
 public class LoanService {
 
     private final LoanRepository loanRepository;
+    public final CustomerRepository customerRepository;
 
     public Loan createLoan(Loan loan) {
         return loanRepository.save(loan);
@@ -39,10 +42,13 @@ public class LoanService {
         if (customerId == null) {
             throw new IllegalArgumentException("Customer and customer ID must not be null");
         }
+        Customer customer = customerRepository.findById(customerId)
+                .orElseThrow(() -> new RuntimeException("برای مشتری با شناسه " + customerId + " وامی یافت نشد."));
+
         List<Loan> loans = loanRepository.findByCustomerId(customerId);
 
         if (loans.isEmpty()) {
-            throw new IllegalArgumentException("برای مشتری با شناسه " + customerId + " وامی یافت نشد.");
+            throw new RuntimeException("برای مشتری با شناسه " + customerId + " وامی یافت نشد.");
         }
 
         return loans;
@@ -62,6 +68,9 @@ public class LoanService {
             throw new IllegalArgumentException("Customer and customer ID must not be null");
         }
 
+        Customer customer = customerRepository.findById(customerId)
+                .orElseThrow(() -> new RuntimeException("برای مشتری با شناسه " + customerId + " وامی یافت نشد."));
+
         List<Loan> loans = loanRepository.findByCustomerIdAndLoanStatus(customerId, loanStatus);
 
         if (loans.isEmpty()) {
@@ -77,6 +86,9 @@ public class LoanService {
         if (customerId == null) {
             throw new IllegalArgumentException("Customer and customer ID must not be null");
         }
+
+        Customer customer = customerRepository.findById(customerId)
+                .orElseThrow(() -> new RuntimeException("برای مشتری با شناسه " + customerId + " وامی یافت نشد."));
 
         List<Loan> loans = loanRepository.findByCustomerIdAndLoanType(customerId, loanType);
 
