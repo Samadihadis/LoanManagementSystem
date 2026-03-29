@@ -20,7 +20,6 @@ import java.util.List;
 public class LoanController {
 
     private final LoanService loanService;
-    private final CustomerService customerService;
 
     @PostMapping
     public ResponseEntity<Loan> createLoan(@RequestBody @Validated Loan loan) {
