@@ -10,13 +10,13 @@ import org.springframework.web.bind.annotation.*;
 import java.math.BigDecimal;
 
 @RestController
-@RequestMapping("/api/payments")
+@RequestMapping("/api/payments/loan")
 @RequiredArgsConstructor
 public class PaymentsController {
 
     private final PaymentsService paymentsService;
 
-    @PostMapping("/loan/{loanId}")
+    @PostMapping("/{loanId}")
     public ResponseEntity<Payments> createPayment(@RequestBody @Validated Payments payments, @PathVariable Long loanId) {
         try {
             var createPayment = paymentsService.createPayment(loanId, payments);
@@ -27,17 +27,17 @@ public class PaymentsController {
 
     }
 
-    @GetMapping("/loan/{loanId}/first")
+    @GetMapping("/{loanId}/first")
     public ResponseEntity<Payments> getFirstPaymentByLoanId(@PathVariable Long loanId){
         return ResponseEntity.ok(paymentsService.getFirstPaymentByLoanId(loanId));
     }
 
-    @GetMapping("/loan/{loanId}/last")
+    @GetMapping("/{loanId}/last")
     public ResponseEntity<Payments> getLastPaymentByLoanId(@PathVariable Long loanId){
         return ResponseEntity.ok(paymentsService.getLastPaymentByLoanId(loanId));
     }
 
-    @GetMapping("/loan/{loanId}/is-paid")
+    @GetMapping("/{loanId}/is-paid")
     public ResponseEntity<?> isLoanFullyPaid(@PathVariable Long loanId) {
 
         boolean isPaid = paymentsService.isLoanFullyPaid(loanId);
@@ -48,7 +48,7 @@ public class PaymentsController {
         }
     }
 
-    @GetMapping("/loan/{loanId}/remaining")
+    @GetMapping("/{loanId}/remaining")
     public ResponseEntity<BigDecimal> getRemainingBalance(@PathVariable Long loanId) {
 
         BigDecimal remaining = paymentsService.getRemainingBalance(loanId);
