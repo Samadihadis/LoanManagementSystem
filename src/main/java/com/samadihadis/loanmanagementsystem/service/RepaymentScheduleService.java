@@ -60,10 +60,10 @@ public class RepaymentScheduleService {
         return repaymentScheduleRepository.findByRepaymentScheduleStatus(repaymentScheduleStatus);
     }
 
-    public List<RepaymentSchedule> getFindByDueDateAndRepaymentScheduleStatus(LocalDate localDate,
+    public List<RepaymentSchedule> getFindByDueDateAndRepaymentScheduleStatus(LocalDate dueDate,
                                                                               RepaymentScheduleStatus repaymentScheduleStatus) {
 
-        return repaymentScheduleRepository.findByDueDateAndRepaymentScheduleStatus(localDate, repaymentScheduleStatus);
+        return repaymentScheduleRepository.findByDueDateAndRepaymentScheduleStatus(dueDate, repaymentScheduleStatus);
     }
 
     public Long getCountByLoanAndRepaymentScheduleStatus(Long loanId , RepaymentScheduleStatus repaymentScheduleStatus) {
