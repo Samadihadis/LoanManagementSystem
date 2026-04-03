@@ -1,5 +1,7 @@
 package com.samadihadis.loanmanagementsystem.controller;
 
+import com.samadihadis.loanmanagementsystem.dto.payments.CreatePaymentRequest;
+import com.samadihadis.loanmanagementsystem.dto.payments.PaymentResponse;
 import com.samadihadis.loanmanagementsystem.entity.Payments;
 import com.samadihadis.loanmanagementsystem.service.PaymentsService;
 import lombok.RequiredArgsConstructor;
@@ -17,10 +19,15 @@ public class PaymentsController {
     private final PaymentsService paymentsService;
 
     @PostMapping("/{loanId}")
-    public ResponseEntity<Payments> createPayment(@RequestBody @Validated Payments payments, @PathVariable Long loanId) {
+    public ResponseEntity<PaymentResponse> createPayment(@RequestBody @Validated CreatePaymentRequest request
+            , @PathVariable Long loanId) {
         try {
-            var createPayment = paymentsService.createPayment(loanId, payments);
-            return ResponseEntity.ok(createPayment);
+            Payments payment = new Payments();
+            payment.setAmountPaid(request.getAmountPaid());
+            payment.setPaymentDate(request.getPaymentDate());
+
+            Payments savedPayment = paymentsService.createPayment(loanId, payment);
+            return ResponseEntity.ok(paymentsService.toResponse(savedPayment));
         } catch (RuntimeException e) {
             return ResponseEntity.badRequest().build();
         }

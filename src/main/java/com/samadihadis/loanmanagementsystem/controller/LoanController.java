@@ -1,5 +1,7 @@
 package com.samadihadis.loanmanagementsystem.controller;
 
+import com.samadihadis.loanmanagementsystem.dto.loan.CreateLoanRequest;
+import com.samadihadis.loanmanagementsystem.dto.loan.LoanResponse;
 import com.samadihadis.loanmanagementsystem.entity.Customer;
 import com.samadihadis.loanmanagementsystem.entity.Loan;
 import com.samadihadis.loanmanagementsystem.enums.LoanStatus;
@@ -22,10 +24,19 @@ public class LoanController {
     private final LoanService loanService;
 
     @PostMapping
-    public ResponseEntity<Loan> createLoan(@RequestBody @Validated Loan loan) {
+    public ResponseEntity<LoanResponse> createLoan(@RequestBody @Validated CreateLoanRequest request) {
         try {
-            var createLoan = loanService.createLoan(loan);
-            return ResponseEntity.ok(createLoan);
+            Loan loan = new Loan();
+
+            loan.setPrincipalAmount(request.getPrincipalAmount());
+            loan.setInterestRate(request.getInterestRate());
+            loan.setTerm(request.getTerm());
+            loan.setStartDate(request.getStartDate());
+            loan.setLoanType(request.getLoanType());
+
+            Loan savedLoan = loanService.createLoan(loan, request.getCustomerId());
+
+            return ResponseEntity.ok(loanService.toResponse(savedLoan));
         } catch (RuntimeException e) {
             return ResponseEntity.badRequest().build();
         }

@@ -1,12 +1,14 @@
 package com.samadihadis.loanmanagementsystem.service;
 
 
+import com.samadihadis.loanmanagementsystem.dto.loan.LoanResponse;
 import com.samadihadis.loanmanagementsystem.entity.Customer;
 import com.samadihadis.loanmanagementsystem.entity.Loan;
 import com.samadihadis.loanmanagementsystem.enums.LoanStatus;
 import com.samadihadis.loanmanagementsystem.enums.LoanType;
 import com.samadihadis.loanmanagementsystem.repository.CustomerRepository;
 import com.samadihadis.loanmanagementsystem.repository.LoanRepository;
+import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -20,7 +22,7 @@ public class LoanService {
     private final LoanRepository loanRepository;
     public final CustomerRepository customerRepository;
 
-    public Loan createLoan(Loan loan) {
+    public Loan createLoan(Loan loan, @NotNull Long customerId) {
         return loanRepository.save(loan);
     }
 
@@ -99,5 +101,26 @@ public class LoanService {
 
         return loans;
     }
+
+    public LoanResponse toResponse(Loan loan) {
+
+        LoanResponse response = new LoanResponse();
+
+        response.setId(loan.getId());
+        response.setPrincipalAmount(loan.getPrincipalAmount());
+        response.setInterestRate(loan.getInterestRate());
+        response.setTerm(loan.getTerm());
+        response.setStartDate(loan.getStartDate());
+        response.setMaturityDate(loan.getMaturityDate());
+        response.setLoanStatus(loan.getLoanStatus());
+        response.setLoanType(loan.getLoanType());
+
+        if (loan.getCustomer() != null) {
+            response.setCustomerId(loan.getCustomer().getId());
+        }
+
+        return response;
+    }
+
 
 }

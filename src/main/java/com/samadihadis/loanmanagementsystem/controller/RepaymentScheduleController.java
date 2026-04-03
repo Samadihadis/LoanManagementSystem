@@ -1,6 +1,9 @@
 package com.samadihadis.loanmanagementsystem.controller;
 
 
+import com.samadihadis.loanmanagementsystem.dto.repaymentSchedule.CreateRepaymentScheduleRequest;
+import com.samadihadis.loanmanagementsystem.dto.repaymentSchedule.RepaymentScheduleResponse;
+import com.samadihadis.loanmanagementsystem.dto.repaymentSchedule.UpdateRepaymentScheduleRequest;
 import com.samadihadis.loanmanagementsystem.entity.RepaymentSchedule;
 import com.samadihadis.loanmanagementsystem.enums.RepaymentScheduleStatus;
 import com.samadihadis.loanmanagementsystem.service.RepaymentScheduleService;
@@ -23,12 +26,21 @@ public class RepaymentScheduleController {
 
 
     @PostMapping("/{loanId}")
-    public ResponseEntity<RepaymentSchedule> createRepaymentSchedule(@RequestBody @Validated RepaymentSchedule repaymentSchedule
+    public ResponseEntity<RepaymentScheduleResponse> createRepaymentSchedule(
+            @RequestBody @Validated CreateRepaymentScheduleRequest request
             , @PathVariable Long loanId) {
 
         try {
-            var createRepaymentSchedule = repaymentScheduleService.createRepaymentSchedule(loanId, repaymentSchedule);
-            return ResponseEntity.ok(createRepaymentSchedule);
+            RepaymentSchedule schedule = new RepaymentSchedule();
+
+            schedule.setInstallmentNumber(request.getInstallmentNumber());
+            schedule.setDueDate(request.getDueDate());
+            schedule.setTotalInstallmentAmount(request.getTotalInstallmentAmount());
+            schedule.setRepaymentScheduleStatus(request.getRepaymentScheduleStatus());
+
+            RepaymentSchedule saved = repaymentScheduleService.createRepaymentSchedule(loanId, schedule);
+
+            return ResponseEntity.ok(repaymentScheduleService.toResponse(saved));
         } catch (RuntimeException e) {
             return ResponseEntity.badRequest().build();
         }
@@ -39,7 +51,7 @@ public class RepaymentScheduleController {
         RepaymentSchedule repaymentSchedule = repaymentScheduleService.getRepaymentScheduleById(id);
 
         if (repaymentSchedule != null) {
-            return ResponseEntity.ok(repaymentSchedule);
+            return ResponseEntity.ok(repaymentScheduleService.toResponse(repaymentSchedule));
         }
         return ResponseEntity
                 .status(HttpStatus.NOT_FOUND)
@@ -49,8 +61,14 @@ public class RepaymentScheduleController {
     }
 
     @GetMapping
-    public ResponseEntity<List<RepaymentSchedule>> getAllRepaymentSchedule() {
-        return ResponseEntity.ok(repaymentScheduleService.getAllRepaymentSchedule());
+    public ResponseEntity<List<RepaymentScheduleResponse>> getAllRepaymentSchedule() {
+        List<RepaymentScheduleResponse> result =
+                repaymentScheduleService.getAllRepaymentSchedule()
+                        .stream()
+                        .map(repaymentScheduleService::toResponse)
+                        .toList();
+
+        return ResponseEntity.ok(result);
     }
 
     @GetMapping("status/{status}")
@@ -77,22 +95,25 @@ public class RepaymentScheduleController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<RepaymentSchedule> updateRepaymentSchedule(
+    public ResponseEntity<RepaymentScheduleResponse> updateRepaymentSchedule(
             @PathVariable Long id,
-            @RequestParam(required = false) RepaymentScheduleStatus status,
-            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate dueDate) {
+            @RequestBody UpdateRepaymentScheduleRequest request) {
 
         try {
-            if (status == null && dueDate == null) {
-                return ResponseEntity.badRequest().build();
-            }
 
-            RepaymentSchedule updatedSchedule = repaymentScheduleService.updateRepaymentSchedule(id, status, dueDate);
-            return ResponseEntity.ok(updatedSchedule);
+            RepaymentSchedule updated = repaymentScheduleService.updateRepaymentSchedule(
+                    id,
+                    request.getStatus(),
+                    request.getDueDate()
+            );
+
+            return ResponseEntity.ok(repaymentScheduleService.toResponse(updated));
+
         } catch (RuntimeException e) {
-            return ResponseEntity.badRequest().body(null);
+            return ResponseEntity.badRequest().build();
         }
     }
+
 
     @PatchMapping("/{id}/status/{status}")
     public ResponseEntity<RepaymentSchedule> updateStatus(

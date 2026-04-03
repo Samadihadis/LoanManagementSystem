@@ -1,7 +1,9 @@
 package com.samadihadis.loanmanagementsystem.controller;
 
 
-import com.samadihadis.loanmanagementsystem.dto.EmailUpdateRequest;
+import com.samadihadis.loanmanagementsystem.dto.customer.CreateCustomerRequest;
+import com.samadihadis.loanmanagementsystem.dto.customer.CustomerResponse;
+import com.samadihadis.loanmanagementsystem.dto.customer.EmailUpdateRequest;
 import com.samadihadis.loanmanagementsystem.entity.Customer;
 import com.samadihadis.loanmanagementsystem.service.CustomerService;
 import lombok.RequiredArgsConstructor;
@@ -21,17 +23,24 @@ public class CustomerController {
 
 
     @PostMapping
-    public ResponseEntity<Customer> createCustomer(@RequestBody @Validated Customer customer) {
+    public ResponseEntity<CustomerResponse> createCustomer(@RequestBody @Validated CreateCustomerRequest request) {
 
         try {
 
             Customer newCustomer = new Customer();
-            newCustomer.setFullName(customer.getFullName());
-            newCustomer.setNationalId(customer.getNationalId());
-            newCustomer.setEmail(customer.getEmail());
+            newCustomer.setFullName(request.getFullName());
+            newCustomer.setNationalId(request.getNationalId());
+            newCustomer.setEmail(request.getEmail());
 
-            var createCustomer = customerService.createCustomer(newCustomer);
-            return ResponseEntity.ok(createCustomer);
+            Customer saved = customerService.createCustomer(newCustomer);
+
+            CustomerResponse response = new CustomerResponse();
+            response.setId(saved.getId());
+            response.setFullName(saved.getFullName());
+            response.setNationalId(saved.getNationalId());
+            response.setEmail(saved.getEmail());
+
+            return ResponseEntity.ok(response);
 
         } catch (RuntimeException e) {
             return ResponseEntity.badRequest().build();

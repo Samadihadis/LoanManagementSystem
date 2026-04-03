@@ -1,4 +1,4 @@
-package com.samadihadis.loanmanagementsystem.dto;
+package com.samadihadis.loanmanagementsystem.dto.customer;
 
 import lombok.Getter;
 import lombok.Setter;

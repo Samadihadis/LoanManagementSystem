@@ -1,6 +1,7 @@
 package com.samadihadis.loanmanagementsystem.service;
 
 
+import com.samadihadis.loanmanagementsystem.dto.payments.PaymentResponse;
 import com.samadihadis.loanmanagementsystem.entity.Loan;
 import com.samadihadis.loanmanagementsystem.entity.Payments;
 import com.samadihadis.loanmanagementsystem.enums.LoanStatus;
@@ -127,5 +128,17 @@ public class PaymentsService {
 
         return remaining.compareTo(BigDecimal.ZERO) > 0 ? remaining : BigDecimal.ZERO;
     }
+
+    public PaymentResponse toResponse(Payments payment) {
+        PaymentResponse response = new PaymentResponse();
+        response.setId(payment.getId());
+        response.setPaymentDate(payment.getPaymentDate());
+        response.setAmountPaid(payment.getAmountPaid());
+        if (payment.getLoan() != null) {
+            response.setLoanId(payment.getLoan().getId());
+        }
+        return response;
+    }
+
 
 }

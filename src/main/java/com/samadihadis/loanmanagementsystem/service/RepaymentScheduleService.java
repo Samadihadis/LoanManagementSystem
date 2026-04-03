@@ -1,6 +1,7 @@
 package com.samadihadis.loanmanagementsystem.service;
 
 
+import com.samadihadis.loanmanagementsystem.dto.repaymentSchedule.RepaymentScheduleResponse;
 import com.samadihadis.loanmanagementsystem.entity.Loan;
 import com.samadihadis.loanmanagementsystem.entity.RepaymentSchedule;
 import com.samadihadis.loanmanagementsystem.enums.LoanStatus;
@@ -93,5 +94,23 @@ public class RepaymentScheduleService {
 
         repaymentSchedule.setRepaymentScheduleStatus(repaymentScheduleStatus);
     }
+
+    public RepaymentScheduleResponse toResponse(RepaymentSchedule schedule) {
+
+        RepaymentScheduleResponse response = new RepaymentScheduleResponse();
+
+        response.setId(schedule.getId());
+        response.setInstallmentNumber(schedule.getInstallmentNumber());
+        response.setDueDate(schedule.getDueDate());
+        response.setTotalInstallmentAmount(schedule.getTotalInstallmentAmount());
+        response.setRepaymentScheduleStatus(schedule.getRepaymentScheduleStatus());
+
+        if (schedule.getLoan() != null) {
+            response.setLoanId(schedule.getLoan().getId());
+        }
+
+        return response;
+    }
+
 
 }
