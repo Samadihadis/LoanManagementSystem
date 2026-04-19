@@ -25,8 +25,6 @@ public class CustomerController {
     @PostMapping
     public ResponseEntity<CustomerResponse> createCustomer(@RequestBody @Validated CreateCustomerRequest request) {
 
-        try {
-
             Customer newCustomer = new Customer();
             newCustomer.setFullName(request.getFullName());
             newCustomer.setNationalId(request.getNationalId());
@@ -42,9 +40,6 @@ public class CustomerController {
 
             return ResponseEntity.ok(response);
 
-        } catch (RuntimeException e) {
-            return ResponseEntity.badRequest().build();
-        }
     }
 
 
@@ -52,15 +47,7 @@ public class CustomerController {
     public ResponseEntity<?> getCustomerById(@PathVariable Long id) {
 
         Customer customer = customerService.getCustomerById(id);
-
-        if (customer != null) {
-            return ResponseEntity.ok(customer);
-        }
-        return ResponseEntity
-                .status(HttpStatus.NOT_FOUND)
-                .body(
-                        String.format("کاربر با شناسه %d یافت نشد.", id)
-                );
+        return ResponseEntity.ok(customer);
     }
 
     @GetMapping
@@ -77,43 +64,21 @@ public class CustomerController {
     public ResponseEntity<?> getCustomerByNationalId(@PathVariable String nationalId) {
 
         Customer customer = customerService.getCustomerByNationalId(nationalId);
-
-        if (customer != null) {
-            return ResponseEntity.ok(customer);
-        }
-        return ResponseEntity
-                .status(HttpStatus.NOT_FOUND)
-                .body(
-                        String.format("کاربر با کد ملی %s یافت نشد.", nationalId)
-                );
+        return ResponseEntity.ok(customer);
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteCustomer(@PathVariable Long id) {
 
-        Customer customer = customerService.getCustomerById(id);
-
-        if (customer != null) {
-            customerService.deleteCustomer(id);
-            return ResponseEntity.ok()
-                    .body(String.format("کاربر با شناسه %d حذف شد.", id));
-        }
-        return ResponseEntity
-                .status(HttpStatus.NOT_FOUND)
-                .body(
-                        String.format("کاربر با شناسه %d یافت نشد.", id)
-                );
+        customerService.deleteCustomer(id);
+        return ResponseEntity.ok(String.format("کاربر با شناسه %d حذف شد.", id));
     }
 
     @PutMapping({"/{id}/email"})
     public ResponseEntity<?> updateEmail(@PathVariable Long id, @RequestBody EmailUpdateRequest emailUpdateRequest) {
 
-        try {
-            Customer updateCustomer = customerService.updateEmail(id, emailUpdateRequest.getNewEmail());
-            return ResponseEntity.ok(updateCustomer);
-        } catch (RuntimeException e) {
-            return ResponseEntity.badRequest().build();
-        }
+        Customer updatedCustomer = customerService.updateEmail(id, emailUpdateRequest.getNewEmail());
+        return ResponseEntity.ok(updatedCustomer);
     }
 
 }

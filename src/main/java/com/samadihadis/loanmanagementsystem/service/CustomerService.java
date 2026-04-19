@@ -2,6 +2,9 @@ package com.samadihadis.loanmanagementsystem.service;
 
 
 import com.samadihadis.loanmanagementsystem.entity.Customer;
+import com.samadihadis.loanmanagementsystem.exception.customer.CustomerNotFoundException;
+import com.samadihadis.loanmanagementsystem.exception.customer.DuplicateEmailException;
+import com.samadihadis.loanmanagementsystem.exception.customer.InvalidEmailException;
 import com.samadihadis.loanmanagementsystem.repository.CustomerRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -24,38 +27,38 @@ public class CustomerService {
     }
 
     public Customer getCustomerById(Long id){
-        Optional<Customer> customer = customerRepository.findById(id);
-        return customer.orElse(null);
+        return customerRepository.findById(id)
+                .orElseThrow(() -> new CustomerNotFoundException(
+                        String.format("مشتری با شناسه %d یافت نشد.", id)
+                ));
     }
 
     public Customer getCustomerByNationalId(String nationalId){
-        Optional<Customer> customer = customerRepository.findByNationalId(nationalId);
-        return customer.orElse(null);
+        return customerRepository.findByNationalId(nationalId)
+                .orElseThrow(()-> new CustomerNotFoundException(
+                        String.format("مشتری با کد ملی %s یافت نشد.", nationalId)
+                ));
     }
 
     public void deleteCustomer(Long id){
+        getCustomerById(id);
         customerRepository.deleteById(id);
     }
 
     public Customer updateEmail(Long customerId , String newEmail){
 
-        Customer customer = customerRepository.findById(customerId)
-                .orElseThrow(() -> new RuntimeException(
-                        String.format("مشتری با شناسه %d یافت نشد." , customerId)
-                ));
+        Customer customer = getCustomerById(customerId);
 
         if (newEmail == null || newEmail.trim().isEmpty()) {
-            throw new IllegalArgumentException("ایمیل نمی‌تواند خالی باشد");
+            throw new InvalidEmailException("ایمیل نمی‌تواند خالی باشد");
         }
 
         if (customerRepository.existsByEmail(newEmail)) {
-            throw new IllegalStateException(
+            throw new DuplicateEmailException(
                     String.format( "ایمیل %s قبلا ثبت شده است." , newEmail)
             );
         }
-
         customer.setEmail(newEmail);
-
         return customerRepository.save(customer);
     }
 }
