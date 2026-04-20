@@ -5,6 +5,10 @@ import com.samadihadis.loanmanagementsystem.dto.payments.PaymentResponse;
 import com.samadihadis.loanmanagementsystem.entity.Loan;
 import com.samadihadis.loanmanagementsystem.entity.Payments;
 import com.samadihadis.loanmanagementsystem.enums.LoanStatus;
+import com.samadihadis.loanmanagementsystem.exception.loan.LoanNotFoundException;
+import com.samadihadis.loanmanagementsystem.exception.loan.LoanStatusException;
+import com.samadihadis.loanmanagementsystem.exception.payment.InvalidPaymentAmountException;
+import com.samadihadis.loanmanagementsystem.exception.payment.PaymentNotFoundException;
 import com.samadihadis.loanmanagementsystem.repository.LoanRepository;
 import com.samadihadis.loanmanagementsystem.repository.PaymentsRepository;
 import lombok.RequiredArgsConstructor;
@@ -25,15 +29,16 @@ public class PaymentsService {
     public Payments createPayment(Long loanId, Payments payment) {
 
         if (payment.getAmountPaid() == null || payment.getAmountPaid().compareTo(BigDecimal.ZERO) <= 0) {
-            throw new RuntimeException("مبلغ پرداختی باید مثبت باشد.");
+            throw new InvalidPaymentAmountException("مبلغ پرداختی باید مثبت باشد.");
         }
 
         Loan loan = loanRepository.findById(loanId)
-                .orElseThrow(() -> new RuntimeException(
-                        String.format("وام با شناسه %d یافت نشد.", loanId)));
+                .orElseThrow(() -> new LoanNotFoundException(
+                        String.format("وام با شناسه %d یافت نشد.", loanId)
+                ));
 
         if (loan.getLoanStatus() == LoanStatus.PAID) {
-            throw new RuntimeException("وام قبلا تسویه شده و نمیتوان پرداختی ثبت کرد.");
+            throw new LoanStatusException("وام قبلا تسویه شده و نمیتوان پرداختی ثبت کرد.");
         }
 
         if (payment.getPaymentDate() == null) {
@@ -65,7 +70,7 @@ public class PaymentsService {
     public BigDecimal getTotalPaidAmountByLoanId(Long loanId) {
 
         Loan loan = loanRepository.findById(loanId)
-                .orElseThrow(() -> new RuntimeException(
+                .orElseThrow(() -> new LoanNotFoundException(
                         String.format("وام با شناسه %d یافت نشد.", loanId)));
 
         List<Payments> payments = paymentsRepository.findByLoan(loan);
@@ -80,13 +85,13 @@ public class PaymentsService {
     public Payments getFirstPaymentByLoanId(Long loanId) {
 
         Loan loan = loanRepository.findById(loanId)
-                .orElseThrow(() -> new RuntimeException(
+                .orElseThrow(() -> new LoanNotFoundException(
                         String.format("وام با شناسه %d یافت نشد.", loanId)));
 
         Payments firstPayment = paymentsRepository.findTopByLoanOrderByPaymentDateAsc(loan);
 
         if (firstPayment == null) {
-            throw new RuntimeException("هیچ پرداختی برای این وام یافت نشد.");
+            throw new PaymentNotFoundException("هیچ پرداختی برای این وام یافت نشد.");
         }
 
         return firstPayment;
@@ -95,13 +100,13 @@ public class PaymentsService {
     public Payments getLastPaymentByLoanId(Long loanId) {
 
         Loan loan = loanRepository.findById(loanId)
-                .orElseThrow(() -> new RuntimeException(
+                .orElseThrow(() -> new LoanNotFoundException(
                         String.format("وام با شناسه %d یافت نشد.", loanId)));
 
         Payments lastPayment = paymentsRepository.findTopByLoanOrderByPaymentDateDesc(loan);
 
         if (lastPayment == null) {
-            throw new RuntimeException("هیچ پرداختی برای این وام یافت نشد.");
+            throw new PaymentNotFoundException("هیچ پرداختی برای این وام یافت نشد.");
         }
 
         return lastPayment;
@@ -110,7 +115,7 @@ public class PaymentsService {
     public boolean isLoanFullyPaid(Long loanId) {
 
         Loan loan = loanRepository.findById(loanId)
-                .orElseThrow(() -> new RuntimeException(
+                .orElseThrow(() -> new LoanNotFoundException(
                         String.format("وام با شناسه %d یافت نشد.", loanId)));
 
         BigDecimal totalPaid = getTotalPaidAmountByLoanId(loanId);
@@ -119,9 +124,8 @@ public class PaymentsService {
 
     public BigDecimal getRemainingBalance(Long loanId) {
         Loan loan = loanRepository.findById(loanId)
-                .orElseThrow(() -> new RuntimeException(
+                .orElseThrow(() -> new LoanNotFoundException(
                         String.format("وام با شناسه %d یافت نشد.", loanId)));
-
 
         BigDecimal totalPaid = getTotalPaidAmountByLoanId(loanId);
         BigDecimal remaining = loan.getPrincipalAmount().subtract(totalPaid);
@@ -139,6 +143,5 @@ public class PaymentsService {
         }
         return response;
     }
-
 
 }

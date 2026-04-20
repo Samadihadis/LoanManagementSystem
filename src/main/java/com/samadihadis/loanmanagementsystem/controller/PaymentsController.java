@@ -21,17 +21,13 @@ public class PaymentsController {
     @PostMapping("/{loanId}")
     public ResponseEntity<PaymentResponse> createPayment(@RequestBody @Validated CreatePaymentRequest request
             , @PathVariable Long loanId) {
-        try {
+
             Payments payment = new Payments();
             payment.setAmountPaid(request.getAmountPaid());
             payment.setPaymentDate(request.getPaymentDate());
 
             Payments savedPayment = paymentsService.createPayment(loanId, payment);
             return ResponseEntity.ok(paymentsService.toResponse(savedPayment));
-        } catch (RuntimeException e) {
-            return ResponseEntity.badRequest().build();
-        }
-
     }
 
     @GetMapping("/{loanId}/first")
