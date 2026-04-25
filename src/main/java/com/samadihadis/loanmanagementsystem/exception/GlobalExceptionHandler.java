@@ -9,6 +9,8 @@ import com.samadihadis.loanmanagementsystem.exception.loan.LoanNotFoundException
 import com.samadihadis.loanmanagementsystem.exception.loan.LoanStatusException;
 import com.samadihadis.loanmanagementsystem.exception.payment.InvalidPaymentAmountException;
 import com.samadihadis.loanmanagementsystem.exception.payment.PaymentNotFoundException;
+import com.samadihadis.loanmanagementsystem.exception.repaymentSchedule.InvalidInstallmentAmountException;
+import com.samadihadis.loanmanagementsystem.exception.repaymentSchedule.RepaymentScheduleNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -146,6 +148,33 @@ public class GlobalExceptionHandler {
                 request.getRequestURI()
         );
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
+    }
+
+    // RepaymentSchedule Exception
+    @ExceptionHandler(RepaymentScheduleNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleRepaymentScheduleNotFound(
+            RepaymentScheduleNotFoundException ex, HttpServletRequest request) {
+
+        ErrorResponse error = new ErrorResponse(
+                ex.getMessage(),
+                HttpStatus.NOT_FOUND.value(),
+                "Not Found",
+                request.getRequestURI()
+        );
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
+    }
+
+    @ExceptionHandler(InvalidInstallmentAmountException.class)
+    public ResponseEntity<ErrorResponse> handleInvalidInstallmentAmount(
+            InvalidInstallmentAmountException ex, HttpServletRequest request) {
+
+        ErrorResponse error = new ErrorResponse(
+                ex.getMessage(),
+                HttpStatus.BAD_REQUEST.value(),
+                "Bad Request",
+                request.getRequestURI()
+        );
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
     }
 
 }

@@ -6,6 +6,10 @@ import com.samadihadis.loanmanagementsystem.entity.Loan;
 import com.samadihadis.loanmanagementsystem.entity.RepaymentSchedule;
 import com.samadihadis.loanmanagementsystem.enums.LoanStatus;
 import com.samadihadis.loanmanagementsystem.enums.RepaymentScheduleStatus;
+import com.samadihadis.loanmanagementsystem.exception.loan.LoanNotFoundException;
+import com.samadihadis.loanmanagementsystem.exception.loan.LoanStatusException;
+import com.samadihadis.loanmanagementsystem.exception.repaymentSchedule.InvalidInstallmentAmountException;
+import com.samadihadis.loanmanagementsystem.exception.repaymentSchedule.RepaymentScheduleNotFoundException;
 import com.samadihadis.loanmanagementsystem.repository.LoanRepository;
 import com.samadihadis.loanmanagementsystem.repository.RepaymentScheduleRepository;
 import lombok.RequiredArgsConstructor;
@@ -28,15 +32,15 @@ public class RepaymentScheduleService {
 
         if (repaymentSchedule.getTotalInstallmentAmount() == null ||
                 repaymentSchedule.getTotalInstallmentAmount().compareTo(BigDecimal.ZERO) <= 0) {
-            throw new RuntimeException("مبلغ پرداختی باید مثبت باشد.");
+            throw new InvalidInstallmentAmountException("مبلغ قسط باید مثبت باشد.");
         }
 
         Loan loan = loanRepository.findById(loanId)
-                .orElseThrow(() -> new RuntimeException(
+                .orElseThrow(() -> new LoanNotFoundException(
                         String.format("وام با شناسه %d یافت نشد.", loanId)));
 
         if (loan.getLoanStatus() == LoanStatus.PAID) {
-            throw new RuntimeException("وام قبلا تسویه شده و نمیتوان پرداختی ثبت کرد.");
+            throw new LoanStatusException("وام قبلا تسویه شده و نمی‌توان قسط جدید ثبت کرد.");
         }
 
         repaymentSchedule.setLoan(loan);
@@ -45,8 +49,9 @@ public class RepaymentScheduleService {
     }
 
     public RepaymentSchedule getRepaymentScheduleById(Long id) {
-        Optional<RepaymentSchedule> repaymentSchedule = repaymentScheduleRepository.findById(id);
-        return repaymentSchedule.orElse(null);
+        return repaymentScheduleRepository.findById(id)
+                .orElseThrow(() -> new RepaymentScheduleNotFoundException(
+                        String.format("قسط با شناسه %d یافت نشد.", id)));
     }
 
     public List<RepaymentSchedule> getAllRepaymentSchedule() {
@@ -70,7 +75,7 @@ public class RepaymentScheduleService {
     public Long getCountByLoanAndRepaymentScheduleStatus(Long loanId , RepaymentScheduleStatus repaymentScheduleStatus) {
 
         Loan loan = loanRepository.findById(loanId)
-                .orElseThrow(() -> new RuntimeException(
+                .orElseThrow(() -> new LoanNotFoundException(
                         String.format("وام با شناسه %d یافت نشد.", loanId)));
 
         return repaymentScheduleRepository.countByLoanAndRepaymentScheduleStatus(loan , repaymentScheduleStatus);
@@ -79,7 +84,8 @@ public class RepaymentScheduleService {
     public RepaymentSchedule updateRepaymentSchedule (Long id , RepaymentScheduleStatus newStatus , LocalDate newDueDate) {
 
         RepaymentSchedule repaymentSchedule = repaymentScheduleRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException(String.format("قسط با شناسه %d یافت نشد." , id)));
+                .orElseThrow(() -> new RepaymentScheduleNotFoundException(
+                        String.format("قسط با شناسه %d یافت نشد.", id)));
 
         repaymentSchedule.setRepaymentScheduleStatus(newStatus);
         repaymentSchedule.setDueDate(newDueDate);
@@ -90,7 +96,7 @@ public class RepaymentScheduleService {
     public void updateStatus(Long id, RepaymentScheduleStatus repaymentScheduleStatus) {
 
         RepaymentSchedule repaymentSchedule = repaymentScheduleRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("قسط پیدا نشد"));
+                .orElseThrow(() -> new RepaymentScheduleNotFoundException("قسط پیدا نشد"));
 
         repaymentSchedule.setRepaymentScheduleStatus(repaymentScheduleStatus);
     }
