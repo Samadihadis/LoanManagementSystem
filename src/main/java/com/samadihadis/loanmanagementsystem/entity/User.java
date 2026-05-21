@@ -1,5 +1,6 @@
 package com.samadihadis.loanmanagementsystem.entity;
 
+import com.samadihadis.loanmanagementsystem.enums.Role;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -11,7 +12,7 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class Username {
+public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -20,9 +21,8 @@ public class Username {
     @Column(nullable = false, unique = true)
     private String username;
 
-    @Column(unique = true)
+    @Column(nullable = false)
     private String password;
 
-    private String roles = "ROLE_USER";
-
+    private Role role;
 }
