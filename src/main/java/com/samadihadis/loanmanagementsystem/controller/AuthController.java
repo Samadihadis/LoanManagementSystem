@@ -2,6 +2,7 @@ package com.samadihadis.loanmanagementsystem.controller;
 
 
 import com.samadihadis.loanmanagementsystem.dto.RegisterRequest;
+import com.samadihadis.loanmanagementsystem.dto.login.LoginRequest;
 import com.samadihadis.loanmanagementsystem.service.AuthService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -20,5 +21,10 @@ public class AuthController {
     public String register(@RequestBody RegisterRequest request) {
         authService.register(request);
         return "User registered successfully";
+    }
+
+    @PostMapping("/login")
+    public String login(@RequestBody LoginRequest request) {
+        return authService.login(request);
     }
 }
