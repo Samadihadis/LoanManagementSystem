@@ -5,10 +5,8 @@ import com.samadihadis.loanmanagementsystem.dto.RegisterRequest;
 import com.samadihadis.loanmanagementsystem.dto.login.LoginRequest;
 import com.samadihadis.loanmanagementsystem.service.AuthService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.core.Authentication;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -26,5 +24,11 @@ public class AuthController {
     @PostMapping("/login")
     public String login(@RequestBody LoginRequest request) {
         return authService.login(request);
+    }
+
+    @GetMapping("/api/user/profile")
+    public String profile(Authentication authentication) {
+
+        return "Hello " + authentication.getName();
     }
 }
